@@ -28,6 +28,7 @@ resource "aws_cognito_user_pool" "main" {
     mutable             = true
   }
 
+	username_attributes = ["email"]
   auto_verified_attributes = ["email"]
 
   tags = {
@@ -44,6 +45,11 @@ resource "aws_cognito_user_pool_domain" "main" {
 resource "aws_cognito_user_pool_client" "admin" {
   name         = "admin-client"
   user_pool_id = aws_cognito_user_pool.main.id
+	callback_urls                        = ["https://example.com"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["email", "openid", "aws.cognito.signin.user.admin"]
+  supported_identity_providers         = ["COGNITO"]
 
   explicit_auth_flows = [
     "ALLOW_ADMIN_USER_PASSWORD_AUTH",
@@ -63,7 +69,8 @@ resource "aws_cognito_user_pool_client" "totem" {
   explicit_auth_flows = [
     "ALLOW_CUSTOM_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH",
-    "ALLOW_USER_SRP_AUTH"
+    "ALLOW_USER_SRP_AUTH",
+		"ALLOW_USER_PASSWORD_AUTH"
   ]
 
   generate_secret = false
