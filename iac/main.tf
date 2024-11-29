@@ -1,12 +1,3 @@
-/* module "s3" {
-  source = "./modules/s3"
-  s3_tags = {
-    Name    = "Bucket for storing Terraform state - ${terraform.workspace}"
-    Iac     = true
-    context = "${terraform.workspace}"
-  }
-} */
-
 module "cognito" {
   source = "./modules/cognito"
   cognito_vars = {
@@ -34,3 +25,14 @@ module "api_gateway" {
 		aws_account_id = var.aws_account_id
   }
 }
+
+/*
+module "lambda" {
+	source = "./modules/lambda"
+	lambda_vars = {
+		project_name = var.project_name
+		environment  = var.environment
+		aws_region   = var.aws_region
+	}
+}
+*/
