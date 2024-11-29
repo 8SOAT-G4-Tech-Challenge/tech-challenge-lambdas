@@ -6,12 +6,13 @@ terraform {
     }
   }
 
-  backend "s3" {
+  # Após subir o bucket, descomente o bloco abaixo
+  /* backend "s3" {
     bucket  = "tech-challenge-gateway-bucket-state-tf"
     region  = "us-east-1"
     key     = "terraform.tfstate"
     encrypt = true
-  }
+  } */
 }
 
 provider "aws" {

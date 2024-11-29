@@ -1,9 +1,3 @@
-variable "state_bucket" {
-  description = "S3 bucket with versioning enabled to store Terraform state"
-  type        = string
-  default     = "tech-challenge-gateway-bucket-state-tf"
-}
-
 variable "project_name" {
   type        = string
   description = "Project name"
@@ -28,4 +22,9 @@ variable "admin_user_email" {
 variable "admin_user_password" {
   type        = string
   description = "Senha do usuário administrador"
+}
+
+variable "aws_account_id" {
+  type        = string
+  description = "ID da conta AWS Lab Academy"
 }

@@ -44,7 +44,7 @@ resource "aws_api_gateway_method" "post_auth" {
   authorizer_id = aws_api_gateway_authorizer.cognito.id
 } */
 
-resource "aws_iam_role" "api_gateway_role" {
+/* resource "aws_iam_role" "api_gateway_role" {
   name = "${var.api_vars["project_name"]}-${var.api_vars["environment"]}-api-gateway-role"
 
   assume_role_policy = jsonencode({
@@ -71,12 +71,13 @@ resource "aws_iam_role_policy" "api_gateway_policy" {
         Effect = "Allow"
         Action = [
           "cognito-idp:InitiateAuth"
+					"cognito-idp:RespondToAuthChallenge"
         ]
         Resource = "*"
       }
     ]
   })
-}
+} */
 
 resource "aws_api_gateway_integration" "cognito" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
@@ -85,7 +86,7 @@ resource "aws_api_gateway_integration" "cognito" {
   integration_http_method = "POST"
   type                    = "AWS"
   uri                     = "arn:aws:apigateway:${var.api_vars["aws_region"]}:cognito-idp:action/InitiateAuth"
-	credentials             = aws_iam_role.api_gateway_role.arn
+	credentials             = "arn:aws:iam::${var.api_vars["aws_account_id"]}:role/LabRole"
   request_templates = {
     "application/json" = <<EOF
 {
@@ -129,5 +130,10 @@ resource "aws_api_gateway_deployment" "deployment" {
     # aws_api_gateway_method.post_admin
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "api"
+}
+
+resource "aws_api_gateway_stage" "example" {
+  deployment_id = aws_api_gateway_deployment.deployment.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  stage_name    = "api"
 }
