@@ -1,0 +1,10 @@
+{
+  "name": "tech-challenge-gateway-shared-utils",
+  "version": "1.0.0",
+  "description": "Shared utilities for Lambda functions",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install"
+  },
+  "dependencies": {}
+}
