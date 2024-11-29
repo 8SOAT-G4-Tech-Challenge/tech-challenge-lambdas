@@ -25,6 +25,6 @@ variable "admin_user_password" {
 }
 
 variable "aws_account_id" {
-	type        = string
-	description = "ID da conta AWS Lab Academy"
+  type        = string
+  description = "ID da conta AWS Lab Academy"
 }

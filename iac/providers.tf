@@ -6,7 +6,7 @@ terraform {
     }
   }
 
-	# Após subir o bucket, descomente o bloco abaixo
+  # Após subir o bucket, descomente o bloco abaixo
   /* backend "s3" {
     bucket  = "tech-challenge-gateway-bucket-state-tf"
     region  = "us-east-1"
