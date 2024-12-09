@@ -38,4 +38,4 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp function.zip s3://tech-challenge-bucket-lambdas/authenticate-admin.zip
+          aws s3 cp lambdas/authenticate-admin/function.zip s3://tech-challenge-bucket-lambdas/authenticate-admin.zip
