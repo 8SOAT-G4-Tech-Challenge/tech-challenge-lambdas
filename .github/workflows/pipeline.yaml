@@ -1,0 +1,40 @@
+name: Deploy Lambda
+
+on:
+  push:
+    branches:
+      - refactor/remove-infra-terraform
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: deploy
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Check if S3 bucket exists
+        run: |
+          if ! aws s3 ls "s3://tech-challenge-bucket-lambdas" 2>&1 | grep -q 'NoSuchBucket'
+          then
+            echo "Bucket exists"
+          else
+            echo "Creating bucket"
+            aws s3 mb s3://tech-challenge-bucket-lambdas
+          fi
+
+      - name: Build and package Lambda
+        run: |
+          cd lambdas/authenticate-admin
+          npm install
+          zip -r function.zip .
+      
+      - name: Upload to S3
+        run: |
+          aws s3 cp function.zip s3://tech-challenge-bucket-lambdas/authenticate-admin.zip

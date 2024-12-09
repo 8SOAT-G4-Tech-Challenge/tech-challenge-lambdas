@@ -1,4 +1,4 @@
-module "cognito" {
+/* module "cognito" {
   source = "./modules/cognito"
   cognito_vars = {
     project_name        = var.project_name
@@ -24,9 +24,9 @@ module "api_gateway" {
     aws_region     = var.aws_region
     aws_account_id = var.aws_account_id
   }
-}
+} */
 
-/*
+
 module "lambda" {
 	source = "./modules/lambda"
 	lambda_vars = {
@@ -35,4 +35,3 @@ module "lambda" {
 		aws_region   = var.aws_region
 	}
 }
-*/
