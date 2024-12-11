@@ -19,13 +19,17 @@ exports.handler = async (event) => {
 	try {
 		client = await pool.connect();
 
-		if (!event?.body?.document) {
+		const body = JSON.parse(event.body);
+
+		const document = body?.document || "";
+
+		if (!document) {
 			const error = new Error('Invalid document');
 			error.statusCode = 400;
 			throw error;
 		}
 
-		const res = await client.query(getCustomerByDocument(event.body.document));
+		const res = await client.query(getCustomerByDocument(document));
 
 		return {
 			statusCode: 200,
