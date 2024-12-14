@@ -1,9 +1,6 @@
 name: Deploy Lambda
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       deployType:
@@ -11,21 +8,17 @@ on:
         type: choice
         options:
           - deploy
+          - update
         required: true
-      aws_account_id:
-        description: 'AWS Account ID'
-        type: string
-        required: true
-      db_aws_host:
-        description: 'AWS RDS Database Host Url'
-        type: string
-        required: true
+
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{github.event.inputs.deployType == 'deploy'}}
-    environment: development
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deployType == 'deploy' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,24 +28,34 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Get RDS Endpoint from SSM
+        id: get-endpoint
+        run: |
+          echo "AWS_RDS_URI=$(aws secretsmanager get-secret-value --secret-id aws_rds_endpoint --query 'SecretString' --output text --region us-east-1)" >> $GITHUB_ENV
+
+      - name: Get AWS Account ID
+        id: get-account-id
+        run: |
+          echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)" >> $GITHUB_ENV
 
       - name: Build and package Lambdas
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_DATABASE: ${{ vars.DB_DATABASE }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}}
+          DB_PORT: ${{ vars.DB_PORT }}}
           DB_AWS_HOST: ${{ github.event.inputs.db_aws_host }}
-          AWS_ACCOUNT_ID: ${{ github.event.inputs.aws_account_id }}
+          AWS_ACCOUNT_ID: ${{ env.AWS_ACCOUNT_ID }}
         run: |
           sh ./scripts/build.sh
           sh ./scripts/deploy.sh
 
   update:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged
-    environment: development
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deployType == 'update') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -62,16 +65,27 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Get RDS Endpoint from SSM
+        id: get-endpoint
+        run: |
+          echo "AWS_RDS_URI=$(aws secretsmanager get-secret-value --secret-id aws_rds_endpoint --query 'SecretString' --output text --region us-east-1)" >> $GITHUB_ENV
+
+      - name: Get AWS Account ID
+        id: get-account-id
+        run: |
+          echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)" >> $GITHUB_ENV
 
       - name: Build and update Lambdas
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_DATABASE: ${{ vars.DB_DATABASE }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ secrets.DB_PORT }}}
-          DB_AWS_HOST: ${{ github.event.inputs.db_aws_host }}
-          AWS_ACCOUNT_ID: ${{ github.event.inputs.aws_account_id }}
+          DB_PORT: ${{ vars.DB_PORT }}}
+          DB_AWS_HOST: ${{ env.AWS_RDS_URI }}
+          AWS_ACCOUNT_ID: ${{ AWS_ACCOUNT_ID }}
+          AWS_RDS_URI: ${{ env.AWS_RDS_URI }}
         run: |
           sh ./scripts/build.sh
           sh ./scripts/deploy-update.sh
