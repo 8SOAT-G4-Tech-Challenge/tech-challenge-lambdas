@@ -14,7 +14,7 @@ do
   cd "$folder" || { echo "Failed to enter $folder"; exit 1; }
   folder_name=$(basename "$folder") 
 
-  if aws lambda create-function --function-name tech-challenge-$folder_name --runtime nodejs18.x --handler index.handler --role arn:aws:iam::$AWS_ACCOUNT_ID:role/LabRole --zip-file fileb://home/runner/work/tech-challenge-lambdas/tech-challenge-lambdas/lambdas/$base_folder/$base_folder.zip --environment "Variables={USER=$DB_USER,HOST='$DB_AWS_HOST',DATABASE='$DB_DATABASE',PASSWORD='$DB_PASSWORD',PORT='$DB_PORT'}" --no-cli-pager; then
+  if aws lambda create-function --function-name tech-challenge-$folder_name --runtime nodejs18.x --handler index.handler --role arn:aws:iam::$AWS_ACCOUNT_ID:role/LabRole --zip-file fileb://home/runner/work/tech-challenge-lambdas/tech-challenge-lambdas/lambdas/$folder_name/$folder_name.zip --environment "Variables={USER=$DB_USER,HOST='$DB_AWS_HOST',DATABASE='$DB_DATABASE',PASSWORD='$DB_PASSWORD',PORT='$DB_PORT'}" --no-cli-pager; then
     echo "Lambda deployed for $folder"
   elif aws lambda update-function-code --function-name tech-challenge-$folder_name --zip-file fileb://$folder_name/$folder_name.zip --no-cli-pager; then
     echo "Lambda update completed for $folder"
