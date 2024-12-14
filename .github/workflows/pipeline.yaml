@@ -31,7 +31,12 @@ jobs:
       - name: Get RDS Endpoint from SSM
         id: get-endpoint
         run: |
-          echo "AWS_RDS_URI=$(aws secretsmanager get-secret-value --secret-id aws_rds_endpoint --query 'SecretString' --output text --region us-east-1)" >> $GITHUB_ENV
+          response=$(aws secretsmanager get-secret-value --secret-id aws_rds_endpoint --query 'SecretString' --output text --region us-east-1)
+          if [ $? -ne 0 ]; then
+            echo "Failed to fetch AWS RDS URI from Secrets Manager."
+            exit 1
+          fi
+          echo "AWS_RDS_URI=$response" >> $GITHUB_ENV
 
       - name: Get AWS Account ID
         id: get-account-id
