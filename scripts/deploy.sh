@@ -1,5 +1,5 @@
 #!/bin/bash
-base_folder="/lambdas"
+base_folder="../lambdas"
 
 folders=$(find "$base_folder" -mindepth 1 -maxdepth 1 -type d)
 
