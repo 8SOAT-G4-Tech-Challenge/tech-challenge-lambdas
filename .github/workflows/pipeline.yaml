@@ -46,7 +46,7 @@ jobs:
           DB_DATABASE: ${{ vars.DB_DATABASE }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_PORT: ${{ vars.DB_PORT }}}
-          DB_AWS_HOST: ${{ github.event.inputs.db_aws_host }}
+          DB_AWS_HOST: ${{ env.AWS_RDS_URI }}
           AWS_ACCOUNT_ID: ${{ env.AWS_ACCOUNT_ID }}
         run: |
           sh ./scripts/build.sh
@@ -84,8 +84,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_PORT: ${{ vars.DB_PORT }}}
           DB_AWS_HOST: ${{ env.AWS_RDS_URI }}
-          AWS_ACCOUNT_ID: ${{ AWS_ACCOUNT_ID }}
-          AWS_RDS_URI: ${{ env.AWS_RDS_URI }}
+          AWS_ACCOUNT_ID: ${{ env.AWS_ACCOUNT_ID }}
         run: |
           sh ./scripts/build.sh
           sh ./scripts/deploy-update.sh
