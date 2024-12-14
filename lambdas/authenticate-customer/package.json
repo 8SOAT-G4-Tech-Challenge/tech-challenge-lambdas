@@ -4,10 +4,7 @@
 	"description": "Lambda function to authenticate customer",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm install && zip -r function.zip .",
-		"deploy": "aws lambda create-function --function-name tech-challenge-authenticate-customer --runtime nodejs18.x --handler index.handler --role arn:aws:iam::$AWS_ACCOUNT_ID:role/LabRole --zip-file fileb://function.zip --environment 'Variables={USER=postgres,HOST=tech-challenge-database.cbdvc6vooftr.us-east-1.rds.amazonaws.com,DATABASE=TechChallengeDatabase,PASSWORD=Senha!123456,PORT=5432}' && npm run update-envs",
-		"deploy:update": "aws lambda update-function-code --function-name tech-challenge-authenticate-customer --zip-file fileb://function.zip && npm run update-envs",
-		"update-envs": "aws lambda update-function-configuration --function-name tech-challenge-authenticate-customer --environment 'Variables={USER=postgres,HOST=tech-challenge-database.cbdvc6vooftr.us-east-1.rds.amazonaws.com,DATABASE=TechChallengeDatabase,PASSWORD=Senha!123456,PORT=5432}'"
+		"build": "npm install && zip -r authenticate-customer.zip ."
 	},
 	"dependencies": {
 		"pg": "^8.13.1"

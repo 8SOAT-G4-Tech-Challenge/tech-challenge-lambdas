@@ -1,0 +1,11 @@
+{
+	"name": "tech-challenge-lambdas",
+	"version": "1.0.0",
+	"description": "AWS Lambda Functions",
+	"main": "index.js",
+	"scripts": {
+		"build": "sh ./scripts/build-all.sh"
+	},
+	"author": "",
+	"license": "ISC"
+}

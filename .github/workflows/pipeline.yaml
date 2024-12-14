@@ -4,11 +4,27 @@ on:
   push:
     branches:
       - main
-      - refactor/remove-infra-terraform
+  workflow_dispatch:
+    inputs:
+      deployType:
+        description: 'Deploy type'
+        type: choice
+        options:
+          - deploy
+        required: true
+      aws_account_id:
+        description: 'AWS Account ID'
+        type: string
+        required: true
+      db_aws_host:
+        description: 'AWS RDS Database Host Url'
+        type: string
+        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: ${{github.event.inputs.deployType == 'deploy'}}
     environment: development
     steps:
       - uses: actions/checkout@v4
@@ -21,22 +37,41 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      - name: Check if S3 bucket exists
+      - name: Build and package Lambdas
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}}
+          DB_AWS_HOST: ${{ github.event.inputs.db_aws_host }}
+          AWS_ACCOUNT_ID: ${{ github.event.inputs.aws_account_id }}
         run: |
-          if ! aws s3 ls "s3://tech-challenge-bucket-lambdas" 2>&1 | grep -q 'NoSuchBucket'
-          then
-            echo "Bucket exists"
-          else
-            echo "Creating bucket"
-            aws s3 mb s3://tech-challenge-bucket-lambdas
-          fi
+          sh ./scripts/build.sh
+          sh ./scripts/deploy.sh
 
-      - name: Build and package Lambda
-        run: |
-          cd lambdas/authenticate-admin
-          npm install
-          zip -r function.zip .
+  update:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Upload to S3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Build and update Lambdas
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}}
+          DB_AWS_HOST: ${{ github.event.inputs.db_aws_host }}
+          AWS_ACCOUNT_ID: ${{ github.event.inputs.aws_account_id }}
         run: |
-          aws s3 cp lambdas/authenticate-admin/function.zip s3://tech-challenge-bucket-lambdas/authenticate-admin.zip
+          sh ./scripts/build.sh
+          sh ./scripts/deploy-update.sh
