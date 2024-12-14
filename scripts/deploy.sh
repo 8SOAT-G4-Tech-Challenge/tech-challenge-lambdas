@@ -1,6 +1,10 @@
 #!/bin/bash
 base_folder="$(pwd)/lambdas"
 
+echo "aaaaaaaa aaaa aaaaa $base_folder"
+
+echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+
 folders=$(find "$base_folder" -mindepth 1 -maxdepth 1 -type d)
 
 for folder in $folders;
