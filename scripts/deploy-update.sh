@@ -1,7 +1,7 @@
 #!/bin/bash
 base_folder="$(cd "$(dirname "$0")/../lambdas")"
 
-echo "$(dirname "$0")/../lambdas"
+echo "$(pwd)"
 
 folders=$(find "$base_folder" -mindepth 1 -maxdepth 1 -type d)
 
