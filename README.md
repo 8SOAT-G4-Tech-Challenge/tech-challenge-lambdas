@@ -4,7 +4,7 @@
 
 ### Objetivo do Projeto
 
-Esse repositório tem como objetivo manter os códigos para as lambdas functions e realizar deploy para um bucket S3 via Pipeline CI/CD, utilizando o Github Actions.
+Esse repositório tem como objetivo manter os códigos para as lambdas functions e realizar deploy via Pipeline CI/CD, utilizando o Github Actions.
 
 ### Participantes do Projeto
 
