@@ -1,0 +1,12 @@
+{
+	"name": "tech-challenge-authenticate-admin",
+	"version": "1.0.0",
+	"description": "Lambda function to authenticate admin users",
+	"main": "index.js",
+	"scripts": {
+		"build": "npm install && zip -r authenticate-admin.zip ."
+	},
+	"dependencies": {
+		"aws-sdk": "^2.1531.0"
+	}
+}
