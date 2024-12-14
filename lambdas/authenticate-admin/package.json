@@ -1,13 +1,13 @@
 {
-  "name": "tech-challenge-authenticate-admin",
-  "version": "1.0.0",
-  "description": "Lambda function to authenticate admin users",
-  "main": "index.js",
-  "scripts": {
-    "build": "npm install && zip -r function.zip .",
-    "deploy": "aws lambda create-function --function-name tech-challenge-authenticate-admin --runtime nodejs18.x --handler index.handler --role arn:aws:iam::$AWS_ACCOUNT_ID:role/LabRole --zip-file fileb://function.zip"
-  },
-  "dependencies": {
-    "aws-sdk": "^2.1531.0"
-  }
+	"name": "tech-challenge-authenticate-admin",
+	"version": "1.0.0",
+	"description": "Lambda function to authenticate admin users",
+	"main": "index.js",
+	"scripts": {
+		"build": "npm install && zip -r authenticate-admin.zip .",
+		"deploy": "aws lambda create-function --function-name tech-challenge-authenticate-admin --runtime nodejs18.x --handler index.handler --role arn:aws:iam::$AWS_ACCOUNT_ID:role/LabRole --zip-file fileb://function.zip"
+	},
+	"dependencies": {
+		"aws-sdk": "^2.1531.0"
+	}
 }

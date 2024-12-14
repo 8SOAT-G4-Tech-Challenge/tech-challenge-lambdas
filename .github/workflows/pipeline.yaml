@@ -31,12 +31,10 @@ jobs:
             aws s3 mb s3://tech-challenge-bucket-lambdas
           fi
 
-      - name: Build and package Lambda
+      - name: Build and package Lambdas
         run: |
-          cd lambdas/authenticate-admin
-          npm install
-          zip -r function.zip .
+          npm run build
 
       - name: Upload to S3
         run: |
-          aws s3 cp lambdas/authenticate-admin/function.zip s3://tech-challenge-bucket-lambdas/authenticate-admin.zip
+          aws s3 cp lambdas/ s3://tech-challenge-bucket-lambdas/ --recursive --exclude "*" --include "*.zip"
