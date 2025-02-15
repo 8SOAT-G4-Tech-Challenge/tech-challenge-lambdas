@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "Make sure to run tech-challenge-database terraform first"
           echo "If not, this step will break"
-          response=$(aws secretsmanager get-secret-value --secret-id aws_rds_endpoint --query 'SecretString' --output text --region us-east-1)
+          response=$(aws secretsmanager get-secret-value --secret-id tech-challenge-user-aws-rds-endpoint --query 'SecretString' --output text --region us-east-1)
           if [ $? -ne 0 ]; then
             exit 1
           fi
@@ -42,9 +42,9 @@ jobs:
 
       - name: Build and package Lambdas
         env:
-          DB_USER: ${{ vars.DB_USER }}
-          DB_DATABASE: ${{ vars.DB_DATABASE }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USER: ${{ vars.TC_USER_DB_POSTGRES_USERNAME }}
+          DB_DATABASE: ${{ vars.TC_USER_DB_POSTGRES_DATABASE }}
+          DB_PASSWORD: ${{ secrets.TC_USER_DB_POSTGRES_PASSWORD }}
           DB_PORT: ${{ vars.DB_PORT }}}
           DB_AWS_HOST: ${{ env.AWS_RDS_URI }}
           AWS_ACCOUNT_ID: ${{ env.AWS_ACCOUNT_ID }}
